@@ -1,25 +1,50 @@
-/**
- * BOT
- */
+/*************
+ *    BOT    *
+ *************/
 
-// Require the necessary discord.js classes
-const { Client, Intents } = require('discord.js');
+const fs = require('fs');
+const { Client, Collection, Intents } = require('discord.js');
 const { TOKEN, PORT } = require('./config.json');
 
-// Create a new client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES] });
 
-// When the client is ready, run this code (only once)
+/**
+ * Commands handling
+ */
+client.commands = new Collection();
+
+const commandFiles = fs.readdirSync('./bot/commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+	const command = require(`./bot/commands/${file}`);
+	client.commands.set(command.data.name, command);
+}
+
+
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isCommand()) return;
+
+	const command = client.commands.get(interaction.commandName);
+
+	if (!command) return;
+
+	try {
+		await command.execute(interaction);
+	} catch (error) {
+		console.error(error);
+		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+	}
+});
+
 client.once('ready', () => {
 	console.log('Bot ready!');
 });
 
-// Login to Discord with your client's token
 client.login(TOKEN);
 
-/**
- * EXPRESSS SERVER
- */
+/************************
+ *    EXPRESS SERVER    *
+ ************************/
 
 const express = require('express')
 const server = express()
@@ -28,6 +53,6 @@ server.get('/', (req, res) => {
 	return res.json('test')
 })
 
-server.listen(PORT, () => {
+/* server.listen(PORT, () => {
 	console.log('Server ready !');
-})
+}) */
