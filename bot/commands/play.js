@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const ytdl = require('ytdl-core')
 const join = require('./join')
-const { subscriptions } = require('../../index')
+const { subscriptions } = require('../GuildMusicManagerMap')
 
 
 module.exports = {

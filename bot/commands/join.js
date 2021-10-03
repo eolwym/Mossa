@@ -1,16 +1,13 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require('@discordjs/builders')
 const { MusicManager } =  require('../Class/MusicManager')
-const { joinVoiceChannel } = require('@discordjs/voice');
-const { subscriptions } = require('../../index')
-
-
+const { joinVoiceChannel } = require('@discordjs/voice')
+const { subscriptions } = require('../GuildMusicManagerMap')
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('join')
 		.setDescription('Join the voice channel of the user who wrote the command.'),
 	async execute(interaction) {
-		const command = interaction.commandName
 
 		if (!interaction.member.voice.channelId) {
 			await interaction.reply('Tè pa dans un chanel, t bète <:mossa:889972668969943111>');

@@ -8,7 +8,7 @@ const {
 	VoiceConnectionStatus,
 } = require('@discordjs/voice');
 const ytdl = require('ytdl-core')
-const { subscriptions } = require('../../index')
+const { subscriptions } = require('../GuildMusicManagerMap')
 
 class MusicManager {
 
@@ -16,6 +16,7 @@ class MusicManager {
 		this.voiceConnection = voiceConnection
 		this.audioPlayer = createAudioPlayer()
 		this.queue = []
+		this.loop = false
 
 		this.#configureVoiceConnection()
 		this.#configureAudioPlayer()
@@ -39,8 +40,8 @@ class MusicManager {
 		if (this.audioPlayer.state.status !== AudioPlayerStatus.Idle || this.queue.length === 0) {
 			return;
 		}
-
-		const nextMusicURL = this.queue.shift();
+		
+		const nextMusicURL = this.queue[0];
 
 		try {
 			const stream = ytdl(nextMusicURL, { filter: 'audioonly' });
@@ -98,10 +99,15 @@ class MusicManager {
 	}
 
 	#configureAudioPlayer() {
-
+		// ProcessQueue when finish a music
 		this.audioPlayer.on('stateChange', (oldState, newState) => {
 			if (newState.status === AudioPlayerStatus.Idle && oldState.status !== AudioPlayerStatus.Idle) {
-				void this.processQueue();
+				if (this.loop) {
+					this.queue.push(this.queue.shift())
+				} else {
+					this.queue.shift()
+				}
+				this.processQueue();
 			}
 		})
 
