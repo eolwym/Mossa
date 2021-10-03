@@ -5,8 +5,17 @@
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { TOKEN, PORT } = require('./config.json');
+const { MusicManager } = require('./bot/Class/MusicManager')
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES] });
+
+
+/**
+ * Maps guild IDs to MusicManager, which exist if the bot has an active VoiceConnection to the guild.
+ */
+const subscriptions = new Map()
+// make this Map accessible everywhere
+module.exports = { subscriptions }
 
 /**
  * Commands handling
@@ -40,6 +49,8 @@ client.once('ready', () => {
 	console.log('Bot ready!');
 });
 
+client.on('error', console.warn);
+
 client.login(TOKEN);
 
 /************************
@@ -53,6 +64,6 @@ server.get('/', (req, res) => {
 	return res.json('test')
 })
 
-/* server.listen(PORT, () => {
+server.listen(PORT, () => {
 	console.log('Server ready !');
-}) */
+})
