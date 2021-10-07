@@ -10,20 +10,11 @@ module.exports = {
 			let musicManager = subscriptions.get(interaction.guildId);
 
 			if (musicManager) {
+				const response = musicManager.pause(interaction.member.voice.channelId)
+				await interaction.reply(response)
 
-				if (interaction.member.voice.channelId != musicManager.voiceConnection.joinConfig.channelId) {
-
-					await interaction.reply({
-						content: 'Tu ne peux pas mettre la musique en pause si tu n\'es pas dans le même salon vocal que moi.',
-						ephemeral: true
-					})
-
-				} else {
-					musicManager.audioPlayer.pause();
-					
-					await interaction.deferReply()
-					await interaction.deleteReply()
-				}
+			} else {
+				await interaction.reply({content: 'Je ne suis dans aucun salon vocal !', ephemeral: true})
 			}
 	
 		},

@@ -28,7 +28,7 @@ module.exports = {
 			)
 			
 			subscriptions.set(interaction.guildId, musicManager)
-			await interaction.reply('Mooossa Desuu ! <:mossa:889972668969943111>');
+
 		
 		// Check if the voice connection need to change channel id
 		} else {
@@ -47,7 +47,6 @@ module.exports = {
 		
 				subscriptions.set(interaction.guildId, musicManager)
 			}
-			await interaction.deferReply()
 		}
 		
 	},

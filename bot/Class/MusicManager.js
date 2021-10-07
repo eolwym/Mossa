@@ -53,6 +53,106 @@ class MusicManager {
 		}
 	}
 
+	loopAll(voiceChannelId) {
+
+		if (voiceChannelId != this.voiceConnection.joinConfig.channelId) {
+
+			return {
+				content: 'Tu ne peux pas mettre la musique en mode loop si tu n\'es pas dans le même salon vocal que moi.',
+				ephemeral: true
+			}
+
+		} else {
+			this.loop = true
+
+			return {content: 'Okay je vais répéter les sons de la file ', ephemeral: true}
+		}
+		
+	}
+
+	noloop(voiceChannelId) {
+		if (voiceChannelId != this.voiceConnection.joinConfig.channelId) {
+
+			return {
+				content: 'Tu ne peux pas mettre la musique en mode noloop si tu n\'es pas dans le même salon vocal que moi.',
+				ephemeral: true
+			}
+
+		} else {
+			this.loop = false
+			
+			return {content: 'Okay les musiques ne seront plus répété', ephemeral: true}
+
+		}
+	}
+
+	pause(voiceChannelId) {
+		if (voiceChannelId != this.voiceConnection.joinConfig.channelId) {
+
+			return{
+				content: 'Tu ne peux pas mettre la musique en pause si tu n\'es pas dans le même salon vocal que moi.',
+				ephemeral: true
+			}
+
+		} else {
+			this.audioPlayer.pause();
+			
+			return {content: 'Hop je mets en pause :)', ephemeral: true}
+		}
+	}
+
+	unpause(voiceChannelId) {
+		if (voiceChannelId != this.voiceConnection.joinConfig.channelId) {
+
+			return {
+				content: 'Tu ne peux pas UNPAUSE si tu n\'es pas dans le même salon vocal que moi.',
+				ephemeral: true
+			}
+
+		} else {
+			this.audioPlayer.unpause();
+			
+			return {content: 'Je relance la musiqueee !', ephemeral: true}
+		}
+	}
+
+	play(url) {
+		if (ytdl.validateURL(url)) {
+
+			this.enqueue(url)
+			return {content: 'Boom Boom', ephemeral: true}
+
+		} else {
+			return { content: 'Cette URL n\'est pas valide :p', ephemeral: true }
+		}
+	}
+	skip(voiceChannelId) {
+		if (voiceChannelId != this.voiceConnection.joinConfig.channelId) {
+			return {content: 'Tu ne peux pas skip si tu n\'es pas dans le même salon vocal que moi.', ephemeral: true}
+		} else {
+			this.audioPlayer.stop();
+			this.processQueue()
+			return {content: 'Meeeeh', ephemeral: true}
+		}
+	}
+
+	stop(voiceChannelId, guildId) {
+		if (voiceChannelId != this.voiceConnection.joinConfig.channelId) {
+
+			return {
+				content: 'Tu ne peux pas me stopper si tu n\'es pas dans le même salon vocal que moi.',
+				ephemeral: true
+			}
+
+		} else {
+			this.queue = [];
+			this.voiceConnection.destroy();
+			subscriptions.delete(guildId)
+			
+			return {content: 'Oh non pas déjà !', ephemeral: true}
+
+		}
+	}
 	/**
 	 * - Subscribe the voice connection to an Audio Player
 	 * - Handle state change of the voice connection
@@ -97,7 +197,9 @@ class MusicManager {
 			}
 		});
 	}
-
+	/**
+	 * - Handle state change of the Audio Player
+	 */
 	#configureAudioPlayer() {
 		// ProcessQueue when finish a music
 		this.audioPlayer.on('stateChange', (oldState, newState) => {

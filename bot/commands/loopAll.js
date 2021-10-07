@@ -3,17 +3,18 @@ const { subscriptions } = require('../GuildMusicManagerMap')
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('noloop')
-		.setDescription('Don\t loop on all music of the Queue.'),
+		.setName('loop')
+		.setDescription('Loop on all music of the Queue.'),
 	async execute(interaction) {
+
 		let musicManager = subscriptions.get(interaction.guildId);
 
 		if (musicManager) {
-			const response = musicManager.noloop(interaction.member.voice.channelId)
+			const response = musicManager.loopAll(interaction.member.voice.channelId)
 			await interaction.reply(response)
 
 		} else {
-			await interaction.reply({content: 'Je ne suis dans aucun salon vocal !', ephemeral: true})
+			await interaction.reply({content: 'Je ne suis dans aucun salon vocal.', ephemeral: true})
 		}
 	},
 };
