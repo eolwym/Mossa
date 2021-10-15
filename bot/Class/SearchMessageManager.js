@@ -15,8 +15,8 @@ class SearchMessageManager {
 		const messagePaginationButtons = []
 		let content = ''
 
-		this.videos.forEach((result, index) => {
-			messageButtons.push(new MessageButton().setCustomId(result.url).setLabel((index+1).toString()).setStyle('PRIMARY'));
+		this.videos.forEach((video, index) => {
+			messageButtons.push(new MessageButton().setCustomId(video.url).setLabel((index+1).toString()).setStyle('PRIMARY'));
 		})
 
 		const previousBtn = new MessageButton().setCustomId('previous').setLabel('◄').setStyle('SUCCESS')
@@ -31,9 +31,8 @@ class SearchMessageManager {
 		messagePaginationButtons.push(previousBtn)
 		messagePaginationButtons.push(nextBtn)
 
-		content += "Vous avez 15 secondes pour faire votre choix. Il vous sera ensuite impossible d'effectuer une action sur ces boutons.\n\n"
-		this.videos.forEach((result, index) => {
-			content += `${index+1} - ${result.duration} | ${result.title} - ${result.author.name}\n`
+		this.videos.forEach((video, index) => {
+			content += `${index+1} - ${video.duration} | ${video.title} - ${video.author}\n`
 		})
 		const rowButtonsMusicChoosed = new MessageActionRow().addComponents(...messageButtons)
 		const rowButtonsPagination = new MessageActionRow().addComponents(...messagePaginationButtons)

@@ -1,12 +1,12 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { subscriptions } = require('../GuildMusicManagerMap')
+const { musicManagers } = require('../datum')
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('noloop')
 		.setDescription('Don\t loop on all music of the Queue.'),
 	async execute(interaction) {
-		let musicManager = subscriptions.get(interaction.guildId);
+		let musicManager = musicManagers.get(interaction.guildId);
 
 		if (musicManager) {
 			const response = musicManager.noloop(interaction.member.voice.channelId)

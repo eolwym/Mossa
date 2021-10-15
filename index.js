@@ -5,7 +5,6 @@
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { TOKEN, PORT } = require('./config.json');
-const { createMossaChannel } = require('./bot/config/mossaChannelCreationConfig')
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES] });
 
@@ -43,7 +42,9 @@ client.on('interactionCreate', async interaction => {
 			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 		}
 	} else if (interaction.isButton()) {
-		const button = client.buttons.get(interaction?.message.interaction.commandName);
+		// Get the command that generated the buttons or the button ID
+		const btnId = interaction?.message.interaction.commandName || interaction.customId
+		const button = client.buttons.get(btnId);
 
 		if (!button) return;
 
@@ -59,8 +60,6 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.once('ready', async () => {
-	// Configure Channel Audio Player Controller
-	createMossaChannel(client)
 	console.log('Mossa is Ready !');
 })
 

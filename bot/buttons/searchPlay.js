@@ -1,23 +1,28 @@
 const ytdl = require('ytdl-core')
 const join = require('../commands/join')
 
-const { subscriptions } = require('../GuildMusicManagerMap')
-const { userIdSearchPaginationMap } = require('../UserIdSearchMessageMap')
+const { musicManagers, searchMessageManagers } = require('../datum.js')
 
 module.exports = {
 	name: 'search',
 	async execute(interaction) {
 		const buttonId = interaction.customId
-		const searchMessageManager = userIdSearchPaginationMap.get(interaction.member.id)
+		const searchMessageManager = searchMessageManagers.get(interaction.member.id)
 
 		if (buttonId !== 'previous' && buttonId !== 'next') {
 
 			if (ytdl.validateURL(buttonId)) {
-	
 				await join.execute(interaction)
-				let musicManager = subscriptions.get(interaction.guildId);
+				let musicManager = musicManagers.get(interaction.guildId);
 	
-				musicManager.enqueue(buttonId)
+				const video = searchMessageManager.videos.find(video => {
+					if (video.url === buttonId) {
+						return video
+					}
+				})
+
+				musicManager.enqueue(video, interaction.guildId)
+
 				// Récupérer le titre de la musique et la mettre dans le message
 				await interaction.update({ content: 'J\'ai ajouté la musique !', components: []});
 

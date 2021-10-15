@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { subscriptions } = require('../GuildMusicManagerMap')
+const { musicManagers } = require('../datum')
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -7,7 +7,7 @@ module.exports = {
 		.setDescription('Pause the current music.'),
 		async execute(interaction) {
 
-			let musicManager = subscriptions.get(interaction.guildId);
+			let musicManager = musicManagers.get(interaction.guildId);
 
 			if (musicManager) {
 				const response = musicManager.pause(interaction.member.voice.channelId)
